@@ -42,7 +42,7 @@ def lexer(stringEntrada):
 				token = token + ch
 				operadorAntes=0
 	if len(token) > 0:
-		listaTokens.append(token)
+		listaTokens.append(int(token))
 	print (listaTokens)
 	return listaTokens
 
@@ -78,21 +78,30 @@ def ShuntingYard(listaTokens):
 	print(fila)	
 	return fila	
 
+def printarArvore(arvore, level):
+	for i in range(level*4):
+		print(' ', end='')
 
+	if type(arvore) is not int:
+		print(arvore.token)
+		printarArvore(arvore.left, level+1)
+		print()
+		printarArvore(arvore.right, level+1)
+	else:
+		print(arvore, end = " ")
 
 def Parser(filaTokens):
 	operadores = ["+", "-", "*", "/"]
 	for i in range(len(filaTokens)):
 		if filaTokens[i] in operadores:
 			no = Tree(filaTokens[i], filaTokens[i-2], filaTokens[i-1])
-			print(no)
 			filaTokens[i] = no
 			filaTokens.pop(i-1)
-			filaTokens.pop(i-1)
-			if len(filaTokens) > 0:
+			filaTokens.pop(i-2)
+			if len(filaTokens) > 1:
 				Parser(filaTokens)
 			break
-	print(filaTokens)
+	return filaTokens
 
 
 def main():
@@ -100,7 +109,10 @@ def main():
 	stringEntrada = input("Insira a expressão aritmética: ")
 	x = lexer(stringEntrada)
 	x = ShuntingYard(x)
-	Parser(x)
+	arvore = Parser(x)
+	print("\n")
+	printarArvore(arvore[0], 0)
+	print("")
 if __name__ == "__main__":
 	main()
 
