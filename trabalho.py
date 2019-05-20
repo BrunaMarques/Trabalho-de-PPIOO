@@ -1,5 +1,7 @@
+import operator
+
 class Tree:
-	def __init__(self, token, left, right):
+	def __init__(self, token, left = None, right = None):
 		self.token = token
 		self.right = right
 		self.left = left
@@ -81,12 +83,12 @@ def ShuntingYard(listaTokens):
 def printarArvore(arvore, level):
 	for i in range(level*4):
 		print(' ', end='')
-
 	if type(arvore) is not int:
 		print(arvore.token)
-		printarArvore(arvore.left, level+1)
-		print()
-		printarArvore(arvore.right, level+1)
+		if type(arvore.token) is str:
+			printarArvore(arvore.left, level+1)
+			print()
+			printarArvore(arvore.right, level+1)
 	else:
 		print(arvore, end = " ")
 
@@ -103,6 +105,50 @@ def Parser(filaTokens):
 			break
 	return filaTokens
 
+def evalStep(arvore):
+
+	arvoreReal = arvore
+	direcao = ""
+	if type(arvore.token) is not int:
+		while type(arvore.left) is not int or type(arvore.right) is not int:
+			if type(arvore.left) is int:
+				direcao = "right"
+				arvorePai = arvore
+				arvore = arvore.right
+			else:
+				direcao = "left"
+				arvorePai = arvore
+				arvore = arvore.left
+	if arvore.token == "+":
+		if direcao == "right":
+			arvorePai.right = arvore.left + arvore.right
+		elif direcao == "left":
+			arvorePai.left = arvore.left + arvore.right
+		else:
+			arvoreReal = arvore.left + arvore.right
+	elif arvore.token == "-":
+		if direcao == "right":
+			arvorePai.right = arvore.left - arvore.right
+		elif direcao == "left":
+			arvorePai.left = arvore.left - arvore.right
+		else:
+			arvoreReal = arvore.left - arvore.right
+	elif arvore.token == "/":
+		if direcao == "right":
+			arvorePai.right = int(arvore.left / arvore.right)
+		elif direcao == "left":
+			arvorePai.left = int(arvore.left / arvore.right)
+		else:
+			arvoreReal = int(arvore.left / arvore.right)
+	elif arvore.token == "*":
+		if direcao == "right":
+			arvorePai.right = arvore.left * arvore.right
+		elif direcao == "left":
+			arvorePai.left = arvore.left * arvore.right
+		else:
+			arvoreReal = arvore.left * arvore.right
+	return arvoreReal
+
 
 def main():
 
@@ -112,7 +158,12 @@ def main():
 	arvore = Parser(x)
 	print("\n")
 	printarArvore(arvore[0], 0)
-	print("")
+	print("\n\n")
+	while type(arvore[0]) is not int:
+		arvore[0] = evalStep(arvore[0])
+		printarArvore(arvore[0], 0)
+		print("\n\n")
+	print()
 if __name__ == "__main__":
 	main()
 
