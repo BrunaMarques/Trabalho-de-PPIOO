@@ -48,6 +48,14 @@ def lexer(stringEntrada):
 	print (listaTokens)
 	return listaTokens
 
+def greaterPrecedence(opList, opPilha):
+	if opPilha == "(":
+		return False
+	elif opPilha == "/" or opPilha == "*":
+		return True
+	elif opList == "/" or opList == "*":
+		return False
+	return True
 
 def ShuntingYard(listaTokens):
 	fila = []
@@ -56,8 +64,8 @@ def ShuntingYard(listaTokens):
 	for token in listaTokens:
 		if token in operadores:
 			if pilha:
-				while pilha[-1] == "/" or pilha[-1] == "*":
-					fila.append(pilha.pop(-1))
+				while greaterPrecedence(token, pilha[-1]):
+					fila.append(pilha.pop())
 					if not pilha:
 						break
 			pilha.append(token)
@@ -104,6 +112,41 @@ def Parser(filaTokens):
 				Parser(filaTokens)
 			break
 	return filaTokens
+
+def toString(arvore, string, flag):
+
+	flagAux = 0
+	if flag == 1:
+		string = string + "("
+		flagAux = 1
+	if type(arvore) is not int:
+		if type(arvore.token) is str:
+			if (arvore.token == "*" or arvore.token == "/") and (type(arvore.left) is not int):
+				if arvore.left.token == "+" or arvore.left.token == "-":
+					flag = 1
+				else:
+					flag = 0
+			else: 
+				flag = 0
+			string = toString(arvore.left, string, flag)
+			string = string + " " + arvore.token + " "
+			if (arvore.token == "*" or arvore.token == "/") and (type(arvore.right) is not int):
+				if arvore.right.token == "+" or arvore.right.token == "-":
+					flag = 1
+				else:
+					flag = 0
+			else:
+				flag = 0
+			string = toString(arvore.right, string, flag)
+	else:
+		string = string + str(arvore)
+	if flagAux == 1:
+		string = string + ")"
+		flag = 0
+	return string
+
+
+
 
 def evalStep(arvore):
 
@@ -159,10 +202,10 @@ def main():
 	print("\n")
 	printarArvore(arvore[0], 0)
 	print("\n\n")
+	print(toString(arvore[0], "", 0))
 	while type(arvore[0]) is not int:
 		arvore[0] = evalStep(arvore[0])
-		printarArvore(arvore[0], 0)
-		print("\n\n")
+		print(toString(arvore[0], "", 0))
 	print()
 if __name__ == "__main__":
 	main()
