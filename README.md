@@ -3,7 +3,9 @@
 Discentes
 
 Bruna Stefany Batista Marques - 103404
+
 João Miguel de Souza Barros - 105415
+
 Luiz Fellipe Machi Pereira - 103491
 
 
