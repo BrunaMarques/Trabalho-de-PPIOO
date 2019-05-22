@@ -168,11 +168,20 @@ def evalStep(arvore):
 			arvoreReal = arvore.left - arvore.right
 	elif arvore.token == "/":
 		if direcao == "right":
-			arvorePai.right = int(arvore.left / arvore.right)
+			if arvore.right == 0:
+				arvorePai.right = 1
+			else:
+				arvorePai.right = int(arvore.left / arvore.right)
 		elif direcao == "left":
-			arvorePai.left = int(arvore.left / arvore.right)
+			if arvore.right == 0:
+				arvorePai.left = 1
+			else:
+				arvorePai.left = int(arvore.left / arvore.right)
 		else:
-			arvoreReal = int(arvore.left / arvore.right)
+			if arvore.right == 0:
+				arvoreReal = 1
+			else:
+				arvoreReal = int(arvore.left / arvore.right)
 	elif arvore.token == "*":
 		if direcao == "right":
 			arvorePai.right = arvore.left * arvore.right
@@ -223,15 +232,17 @@ def toString(arvore, string, flag):
 
 def main():
 
-	stringEntrada = input("Insira a expressão aritmética: ")
-	x = lexer(stringEntrada)
-	x = ShuntingYard(x)
-	arvore = Parser(x)
-	print(toString(arvore[0], "", 0))
-	while type(arvore[0]) is not int:
-		arvore[0] = evalStep(arvore[0])
+	stringEntrada = input()
+	while stringEntrada:
+		x = lexer(stringEntrada)
+		x = ShuntingYard(x)
+		arvore = Parser(x)
 		print(toString(arvore[0], "", 0))
-	print()
+		while type(arvore[0]) is not int:
+			arvore[0] = evalStep(arvore[0])
+			print(toString(arvore[0], "", 0))
+		print()
+		stringEntrada = input()
 if __name__ == "__main__":
 	main()
 
