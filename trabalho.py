@@ -1,4 +1,6 @@
+from dataclasses import dataclass
 # Classe árvore:
+@dataclass
 class Tree:
 
 # Um nó da árvore possui o token, e os filhos da esquerda e da direita.
@@ -99,7 +101,7 @@ def ShuntingYard(listaTokens):
 				break
 	return fila	
 
-""" Função para testar se a árvore está certa:
+ #Função para testar se a árvore está certa:
 
 def printarArvore(arvore, level):
 	for i in range(level*4):
@@ -112,7 +114,7 @@ def printarArvore(arvore, level):
 			printarArvore(arvore.right, level+1)
 	else:
 		print(arvore, end = " ")
-"""
+
 
 # Função para construir a árvore binária de expressão a partir da fila de tokens.
 def Parser(filaTokens):
@@ -236,7 +238,9 @@ def main():
 	while stringEntrada:
 		x = lexer(stringEntrada)
 		x = ShuntingYard(x)
+		print(x)
 		arvore = Parser(x)
+		printarArvore(arvore[0], 0)
 		print(toString(arvore[0], "", 0))
 		while type(arvore[0]) is not int:
 			arvore[0] = evalStep(arvore[0])
